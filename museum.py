@@ -4,8 +4,8 @@ from PIL import Image
 import io
 
 def compare_with_s3_images(uploaded_image, bucket_name, similarity_threshold=70):
-    rekognition_client = boto3.client('rekognition')
-    s3_client = boto3.client('s3')
+    rekognition_client = boto3.client('rekognition', region_name='us-east-1')
+    s3_client = boto3.client('s3', region_name='us-east-1')
 
     # Obter a lista de imagens do bucket
     response = s3_client.list_objects_v2(Bucket=bucket_name)
