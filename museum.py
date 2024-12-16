@@ -82,7 +82,7 @@ def main():
 
         with col2:
             # Exibição da imagem
-            st.image(img1, caption="Imagem Enviada", width=1100)
+            st.image(img1, caption="Imagem Enviada", width=500)
 
         # Realizar comparação com imagens no bucket S3
         st.write("### Comparando com imagens no bucket S3...")
