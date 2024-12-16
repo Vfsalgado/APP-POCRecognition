@@ -37,12 +37,21 @@ def compare_with_s3_images(uploaded_image, bucket_name, similarity_threshold=70)
             for face_match in compare_response['FaceMatches']:
                 similarity = face_match['Similarity']
                 if similarity >= similarity_threshold:
+                    # Adicionar o nome e a similaridade da imagem correspondente
                     matching_images.append((key, similarity))
 
         except Exception as e:
             print(f"Erro ao comparar com {key}: {e}")
 
     return matching_images
+
+def load_image_from_s3(bucket_name, key):
+    """Carregar imagem do bucket S3 como objeto PIL."""
+    s3_client = boto3.client('s3')
+    response = s3_client.get_object(Bucket=bucket_name, Key=key)
+    image_bytes = response['Body'].read()
+    image = Image.open(io.BytesIO(image_bytes))
+    return image
 
 def main():
     # Configuração inicial da página
@@ -55,7 +64,7 @@ def main():
     st.sidebar.write("## Upload de imagem :gear:")
 
     # Nome do bucket S3
-    bucket_name = "testfilesvsbusiness "
+    bucket_name = "testfilesvsbusiness"
 
     # Upload da imagem
     file1 = st.sidebar.file_uploader("Upload da Imagem", type=["png", "jpg", "jpeg"])
@@ -82,7 +91,10 @@ def main():
         if matching_images:
             st.write("### Imagens Correspondentes:")
             for image_name, similarity in matching_images:
-                st.write(f"- {image_name} (Similaridade: {similarity:.2f}%)")
+                # Carregar a imagem do S3
+                image = load_image_from_s3(bucket_name, image_name)
+                # Exibir a imagem e a similaridade
+                st.image(image, caption=f"{image_name} (Similaridade: {similarity:.2f}%)", width=300)
         else:
             st.write("Nenhuma imagem correspondente encontrada.")
     else:
