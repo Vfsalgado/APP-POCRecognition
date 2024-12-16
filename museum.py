@@ -64,7 +64,7 @@ def main():
     st.sidebar.write("## Upload de imagem :gear:")
 
     # Nome do bucket S3
-    bucket_name = "testfilesvsbusiness"
+    bucket_name = "fotos-museu"
 
     # Upload da imagem
     file1 = st.sidebar.file_uploader("Upload da Imagem", type=["png", "jpg", "jpeg"])
