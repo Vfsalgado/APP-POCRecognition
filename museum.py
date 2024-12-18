@@ -67,7 +67,9 @@ def login(username, password):
         st.rerun()  # Redireciona imediatamente após o login bem-sucedido
     else:
         st.error("Usuário ou senha incorretos.")
-        
+
+# Verifica se o usuário está logado
+    check_login()               
 
 if not st.session_state.logged_in:
     st.title("Login")  # Altera o título para "Login"
@@ -77,9 +79,7 @@ if not st.session_state.logged_in:
     if st.button("Entrar"):
         login(username, password)
     
-    # Verifica se o usuário está logado
-    check_login()
-        
+    
 else:       
     # Configuração inicial da página
     st.set_page_config(layout="wide", page_title="Image Comparison APP")
