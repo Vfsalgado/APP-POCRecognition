@@ -3,18 +3,25 @@ import streamlit as st
 from PIL import Image
 import io
 
-# Initialize session state for login
-def initialize_session_state():
-    if 'logged_in' not in st.session_state:
-        st.session_state.logged_in = False
-
 # Function to process login
 def login(username, password):
-    if username == "feluma" and password == "feluma123":
-        st.session_state.logged_in = True
-        st.rerun()  # Redirect immediately after successful login
-    else:
-        st.error("Usuário ou senha incorretos.")
+    try:
+        # Check credentials
+        if username == "feluma" and password == "feluma123":
+            # Explicitly set logged_in to True
+            st.session_state.logged_in = True
+            # Force a rerun to refresh the page state
+            st.experimental_rerun()
+        else:
+            # Clear any previous login attempts
+            st.session_state.login_error = "Usuário ou senha incorretos."
+            # Display error message
+            st.error(st.session_state.login_error)
+    except Exception as e:
+        # Catch and log any unexpected errors
+        st.error(f"Erro durante o login: {e}")
+        # Optional: log the error for debugging
+        print(f"Login error: {e}")
 
 def compare_with_s3_images(uploaded_image, bucket_name, similarity_threshold=70):
     rekognition_client = boto3.client('rekognition', region_name='us-east-2')
@@ -68,7 +75,12 @@ def load_image_from_s3(bucket_name, key):
 
 def main():
     # Initialize session state
-    initialize_session_state()
+    if 'logged_in' not in st.session_state:
+        st.session_state.logged_in = False
+    
+    # Clear any previous login errors
+    if 'login_error' in st.session_state:
+        del st.session_state.login_error
 
     if not st.session_state.logged_in:
         st.title("Login")
@@ -77,6 +89,10 @@ def main():
         
         if st.button("Entrar"):
             login(username, password)
+        
+        # Display any previous login error
+        if 'login_error' in st.session_state:
+            st.error(st.session_state.login_error)
     
     else:       
         # Initial page configuration
@@ -86,7 +102,7 @@ def main():
         logout_clicked = st.button("Sair")
         if logout_clicked:
             st.session_state.logged_in = False
-            st.rerun() 
+            st.experimental_rerun() 
 
         # Main title
         st.write("## Museu de Imagens Feluma")
