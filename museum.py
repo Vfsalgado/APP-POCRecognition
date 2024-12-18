@@ -3,23 +3,9 @@ import streamlit as st
 from PIL import Image
 import io
 
-# Função para verificar o login
-def check_login():
-    if 'logged_in' not in st.session_state:
-        st.session_state.logged_in = False
-
-# Função para processar o login
-def login(username, password):
-    if username == "feluma" and password == "feluma123":
-        st.session_state.logged_in = True
-        st.rerun()  # Redireciona imediatamente após o login bem-sucedido
-    else:
-        st.error("Usuário ou senha incorretos.")
-
-
 def compare_with_s3_images(uploaded_image, bucket_name, similarity_threshold=70):
-    rekognition_client = boto3.client('rekognition', region_name='us-east-1')
-    s3_client = boto3.client('s3', region_name='us-east-1')
+    rekognition_client = boto3.client('rekognition', region_name='us-east-2')
+    s3_client = boto3.client('s3', region_name='us-east-2')
 
     # Obter a lista de imagens do bucket
     response = s3_client.list_objects_v2(Bucket=bucket_name)
@@ -69,8 +55,19 @@ def load_image_from_s3(bucket_name, key):
 
 
 
-# Verifica se o usuário está logado
-check_login()
+# Função para verificar o login
+def check_login():
+    if 'logged_in' not in st.session_state:
+        st.session_state.logged_in = False
+
+# Função para processar o login
+def login(username, password):
+    if username == "feluma" and password == "feluma123":
+        st.session_state.logged_in = True
+        st.rerun()  # Redireciona imediatamente após o login bem-sucedido
+    else:
+        st.error("Usuário ou senha incorretos.")
+        
 
 if not st.session_state.logged_in:
     st.title("Login")  # Altera o título para "Login"
@@ -79,6 +76,9 @@ if not st.session_state.logged_in:
     
     if st.button("Entrar"):
         login(username, password)
+    
+    # Verifica se o usuário está logado
+    check_login()
         
 else:       
     # Configuração inicial da página
@@ -97,7 +97,7 @@ else:
     st.sidebar.write("## Upload de imagem :gear:")
 
     # Nome do bucket S3
-    bucket_name = "testfilesvsbusiness"
+    bucket_name = "fotos-museu"
 
     # Upload da imagem
     file1 = st.sidebar.file_uploader("Upload da Imagem", type=["png", "jpg", "jpeg"])
@@ -133,3 +133,7 @@ else:
     else:
         # Mensagem caso nenhuma imagem seja carregada
         st.write("Por favor, selecione uma imagem válida para exibir e comparar.")
+
+
+
+
